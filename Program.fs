@@ -1,6 +1,7 @@
 module GraphColouring.Program
 
 open GraphColouring.CsvHelper
+open GraphColouring.Graph
 open GraphColouring.Helpers
 open Newtonsoft.Json
 open System
@@ -32,6 +33,10 @@ let private _test () =
 
     let exams = getExamData ()
     //exams |> printJson
+
+    let constraintGraph = createExamConstraintGraph (getExamData ())
+    //constraintGraph |> printJson
+    //constraintGraph |> printGraph
 
     ()
 
