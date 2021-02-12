@@ -57,7 +57,26 @@ let createExamConstraintGraph (settings: Settings) (exams: Exam list) =
         nodes
         edges
 
-let printGraph (graph : Graph<'a, 'b, 'c>) =
+let toIndexMap (graph: Graph<'a, 'b, _>) =
+    let nodes = Hekate.Graph.Nodes.toList graph
+    List.mapFold
+        (* Convert nodes into a map based on time slot - i.e. chromatic index *)
+        (fun acc node ->
+            let name, index = node
+            true, Map.add
+                index
+                (
+                    match Map.tryFind index acc with 
+                    | None -> [name]
+                    | Some values -> List.append values [name]
+                )
+                acc
+        )
+        Map.empty<'b, 'a list>
+        nodes
+    |> fun (_, g) -> g
+
+let printGraph (graph : Graph<'a, 'b, _>) =
     Console.WriteLine "---- Base Graph Details ----"
 
     Console.WriteLine "NodeList::"
@@ -93,4 +112,12 @@ let printGraphColouring (graph: Graph<'a, 'b, _>) =
             |> Console.WriteLine
         )
 
+    Console.WriteLine "---- - ----"
+
+let printTimetable (graph: Graph<string, int, _>) =
+    Console.WriteLine "---- Timetable ----"
+    graph
+    |> toIndexMap
+    |> fun table -> {Timetable.Timeslots = table}
+    |> GraphColouring.Helpers.printTimetable
     Console.WriteLine "---- - ----"

@@ -38,26 +38,32 @@ let private _test settings =
 
     let greedyColoured = Greedy.colourGraph settings constraintGraph
     //greedyColoured |> printJson
-    greedyColoured |> printGraph
+    //greedyColoured |> printGraph
     //greedyColoured |> printGraphColouring
-    //greedyColoured |> Greedy.printTimetable
+    greedyColoured |> Graph.printTimetable
+
+    let randomColoured = RandomColour.colourGraph settings constraintGraph
+    //randomColoured |> printJson
+    //randomColoured |> printGraph
+    //randomColoured |> printGraphColouring
+    randomColoured |> Graph.printTimetable
 
     ()
 
 let rec private _run (settings: Settings) =
+    let startTime = System.DateTime.UtcNow
     match settings.Algorithm with
-    | Greedy ->
-        let startTime = System.DateTime.UtcNow
-        let graph = createExamConstraintGraph settings (getExamData ()) |> Greedy.colourGraph settings
-        graph |> Greedy.printTimetable
-        let endTime = System.DateTime.UtcNow
-        let ellapsed = endTime-startTime
+    | Greedy -> createExamConstraintGraph settings (getExamData ()) |> Greedy.colourGraph settings
+    | Random -> createExamConstraintGraph settings (getExamData ()) |> RandomColour.colourGraph settings
+    |> fun g ->
+        g |> Graph.printTimetable
+        let ellapsed = (System.DateTime.UtcNow)-startTime
         Console.WriteLine "---- Ellapsed Time ----"
         sprintf "%fms" ellapsed.TotalMilliseconds
         |> Console.WriteLine
         Console.WriteLine "---- - ----"
-        (* Uncomment the following line to make the application run continuously *)
-        //_run settings
+    (* Uncomment the following line to make the application run continuously *)
+    //_run settings
 
 [<EntryPoint>]
 let main _ =

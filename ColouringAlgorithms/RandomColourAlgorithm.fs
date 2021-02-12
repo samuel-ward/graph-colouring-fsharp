@@ -1,20 +1,21 @@
-module GraphColouring.Algorithms.Greedy
+module GraphColouring.Algorithms.RandomColour
 
 open GraphColouring.Graph
 open GraphColouring.TypeProvider
 open Hekate
 open System
 
-(* 
-    Greedy Algorithm - Basic
+(*
+    Random Colour Algorithm - Basic
         Psuedo Code:
-        1. Colour first vertex/node with first colour
-        2. For each remain vertex/node
-            a. Consider the lowest numbered colour that has already been used,
-                but not on an adjacent vertex/node
-            b. If all previously assigned colours are adjacent, assign a new colour
+        1. Randomly select vertex/node and colour it with the lowest chromatic index
+        2. For each remaining vertex/node
+            a. Choose a vertex/node at random
+            b. Consider the lowest available chromatic index that is not present
+                on an adjacent vertex/node
+            c. If all adjacent vertices/nodes assign a new chromatic index
         Assumptions:
-        - '-1' means an vertex/node with has not been assigned a colour yet
+        - '-1' means a vertex/node has not been assigned a chomatic index yet
 *)
 
 let rec private _tryIndex cap index (indexList: Map<int, string list>) =
@@ -24,9 +25,19 @@ let rec private _tryIndex cap index (indexList: Map<int, string list>) =
     | Some l when List.length l < cap && index >= 0 -> index
     | Some _ -> _tryIndex cap (index+1) indexList
 
+let private _copyShuffle (rnd: Random) source =
+    (* Use Fisher-Yates shuffle for randomizing *)
+    let arr = Seq.toArray source
+    let len = Array.length arr
+    for i in 0 .. len - 2 do
+        let tmp, j = arr.[i], rnd.Next(i, len)
+        arr.[i] <- arr.[j]; arr.[j] <- tmp
+    arr |> List.ofArray
+
 let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
-    Console.WriteLine "---- Greedy Colouring ----"
+    Console.WriteLine "---- Random Colouring ----"
     let edges = Hekate.Graph.Edges.toList graph
+    (* Randomise ordering of nodes *)
     List.fold
         (fun g node ->
             (* Split current node into lable and chromatic index *)
@@ -101,4 +112,4 @@ let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
             Hekate.Graph.Nodes.add colouredNode g
         )
         graph
-        (Hekate.Graph.Nodes.toList graph)
+        (graph |> Hekate.Graph.Nodes.toList |> _copyShuffle (Random()))

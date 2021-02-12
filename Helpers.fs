@@ -57,6 +57,7 @@ let private _toSettings (set: SettingsBase) =
         Settings.Algorithm = 
             match set.Algorithm with
             | Some s when String.Equals(s, "greedy") -> Algorithm.Greedy
+            | Some s when String.Equals(s, "random") -> Algorithm.Random
             | None | _ -> Algorithm.Greedy
         Room = set.Room
     }

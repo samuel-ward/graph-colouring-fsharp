@@ -20,6 +20,16 @@ The Graph Colouring problem is what is known as an _NP Complete_ problem.
 
 ## Algorithms
 
+### Random Colouring Algorithm
+
+
+
+#### Psuedo Code
+
+```
+
+```
+
 ### Greedy Algorithm
 
 The Greedy Coloring Algorithm doesn't guarantee to use a the minimum number of colours, but it does gaurantee an upper bound on the number of colours - being `d+1` where `d` is the maximum degree of a vertex.
@@ -75,8 +85,7 @@ They consist of the following:
 
 ```json
 {
-    "algorithm": "greedy",
-    "data": "./Data/anonymised.csv",
+    "algorithm": "greedy | random",
     "rooms": 10
 }
 ```
@@ -85,11 +94,22 @@ They consist of the following:
 
 > _NOTE:_ The settings get deserialised as option types, this means that if they are undefined in the JSON file the application will use defaults instead
 
+> _NOTE:_ The only algorithms available are `"greedy", "random"`, more were planned to be added.
+
 #### Settings To Be Implemented
 
 The following are settings that have not yet been implemented because of time constraints:
 
 - "data": data location is hardcoded
-- "timeslots": there is currently no restriction on timeslots
+- "timeslots": there is currently no restriction on timeslots i.e. number of columns in output timetable
 
-> _NOTE:_ The only algorithm available is `"greedy"`, more were planned to be added.
+Desired settings:
+
+```json
+{
+    "algorithm": "random | greedy | k-start | lazy-dfs",
+    "data": "/location/to/data/file.csv",
+    "rooms": 10,
+    "timeslots": 10
+}
+```
