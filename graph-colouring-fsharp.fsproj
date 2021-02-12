@@ -17,6 +17,7 @@
     <Compile Include="Helpers.fs" />
     <Compile Include="CsvHelper.fs" />
     <Compile Include="Graph.fs" />
+    <Compile Include="./ColouringAlgorithms/GreedyAlgorithm.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 

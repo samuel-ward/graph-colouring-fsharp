@@ -1,5 +1,6 @@
-module GraphColouring.Program
+﻿module GraphColouring.Program
 
+open GraphColouring.Algorithms
 open GraphColouring.CsvHelper
 open GraphColouring.Graph
 open GraphColouring.Helpers
@@ -37,6 +38,12 @@ let private _test () =
     let constraintGraph = createExamConstraintGraph (getExamData ())
     //constraintGraph |> printJson
     //constraintGraph |> printGraph
+
+    let greedyColoured = Greedy.colourGraph constraintGraph
+    //greedyColoured |> printJson
+    //greedyColoured |> printGraph
+    greedyColoured |> printGraphColouring
+    greedyColoured |> Greedy.printTimetable
 
     ()
 
