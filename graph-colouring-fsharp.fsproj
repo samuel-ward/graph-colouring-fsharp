@@ -6,6 +6,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FifteenBelow.Json.Core" Version="1.0.0" />
+    <PackageReference Include="FSharp.Data" Version="3.3.3" />
+    <PackageReference Include="Hekate" Version="3.3.0" />
+    <PackageReference Include="Newtonsoft.JSON" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="TypeProvider.fs" />
+    <Compile Include="Helpers.fs" />
+    <Compile Include="CsvHelper.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
