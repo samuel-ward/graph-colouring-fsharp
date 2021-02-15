@@ -1,5 +1,6 @@
 module GraphColouring.Algorithms.Greedy
 
+open GraphColouring.TypeProvider
 open Hekate
 open System
 
@@ -90,6 +91,7 @@ let printTimetable (graph: Graph<string, int, string>) =
         )
         Map.empty<int, string list>
         nodes
-    |> fun (_, table) -> table
-    |> GraphColouring.Helpers.printJson
+    |> fun (_, table) -> {Timetable.Timeslots = table}
+    |> GraphColouring.Helpers.printTimetable
+    //|> GraphColouring.Helpers.printJson
     Console.WriteLine "---- - ----"

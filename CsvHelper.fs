@@ -29,6 +29,7 @@ type StudentCsvTypeProvider = CsvProvider<"./Data/anonymised.csv", HasHeaders=fa
 let private _mapColumnsToList (c2: string option) c3 c4 c5 =
     [c2; c3; c4; c5]
     |> List.choose id
+    |> List.map (fun c -> c.Trim())
 
 let getStudentData () =
     let temp = StudentCsvTypeProvider.GetSample()
@@ -71,7 +72,10 @@ let private _getExamStudents (csv: StudentCsvTypeProvider) =
     csv.Rows
     |> Seq.mapFold
         (fun (state: Map<string, string list>) row -> 
-            let exams = [row.Column2; row.Column3; row.Column4; row.Column5] |> List.choose id
+            let exams = 
+                [row.Column2; row.Column3; row.Column4; row.Column5]
+                |> List.choose id
+                |> List.map (fun c -> c.Trim())
             row, examStudentsBuilder state exams row.Column1
         )
         Map.empty

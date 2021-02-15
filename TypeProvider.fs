@@ -14,3 +14,8 @@ and Exam =
         Students: string list
         StudentsQuantity: int
     }
+
+and Timetable =
+    {
+        Timeslots: Map<int, string list>
+    }
