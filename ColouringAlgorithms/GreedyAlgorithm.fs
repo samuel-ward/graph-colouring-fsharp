@@ -16,7 +16,33 @@ open System
         - '-1' means an vertex/node with has not been assigned a colour yet
 *)
 
-let colourGraph (graph: Graph<string, int, string>) =
+let private _toIndexMap (graph: Graph<string, int, string>) =
+    let nodes = Hekate.Graph.Nodes.toList graph
+    List.mapFold
+        (* Convert nodes into a map based on time slot - i.e. chromatic index *)
+        (fun acc node ->
+            let name, index = node
+            true, Map.add
+                index
+                (
+                    match Map.tryFind index acc with 
+                    | None -> [name]
+                    | Some values -> List.append values [name]
+                )
+                acc
+        )
+        Map.empty<int, string list>
+        nodes
+    |> fun (_, g) -> g
+
+let rec private _tryIndex cap index (indexList: Map<int, string list>) =
+    (* Increment through the indices available *)
+    match Map.tryFind index indexList with
+    | None -> index
+    | Some l when List.length l < cap && index >= 0 -> index
+    | Some _ -> _tryIndex cap (index+1) indexList
+
+let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
     Console.WriteLine "---- Greedy Colouring ----"
     let edges = Hekate.Graph.Edges.toList graph
     List.fold
@@ -35,12 +61,12 @@ let colourGraph (graph: Graph<string, int, string>) =
                 |> function
                 | [] -> 
                     (* No constraint edges -> set to 0 i.e. lowest index *)
-                    Hekate.LNode (vertex, 0)
+                    0, (g |> _toIndexMap)
                 | edglist -> 
                     List.where
                         (fun (name, _) ->
                             (* Get all nodes that appear in the list *)
-                            List.where (fun (_, vertex2, _) -> vertex2 = name) edglist
+                            List.where (fun (vertex1, vertex2, _) -> vertex2 = name || vertex1 = name) edglist
                             |> function
                             | [] -> false
                             | _ -> true
@@ -52,20 +78,42 @@ let colourGraph (graph: Graph<string, int, string>) =
                     | nodelist -> List.map (fun (_, i) -> i) nodelist
                     |> function
                     (* If no nodes are connected, set chromatic index to 0, else find the lowest available index to set *)
-                    | [] -> 0
+                    | [] -> 0, (g |> _toIndexMap)
                     | indexlist ->
+                        (* Bloat indices that conflict via edges *)
+                        let indexMap =
+                            List.fold
+                                (fun acc ind ->
+                                    Map.add
+                                        ind
+                                        (
+                                            match settings.Room with
+                                            | None -> []
+                                            | Some i -> List.init i (fun _ -> "")
+                                        )
+                                        acc
+                                )
+                                (g |> _toIndexMap)
+                                indexlist
                         (* Find the maximum chromatic index out of the receieved nodes *)
-                        List.max indexlist
-                        |> function
-                        | i when i < 0 -> 0
-                        | i ->
-                            (* Populate a new list with all available chromatic indices between 0 and 1+max *)
-                            List.init (i+1) (fun i -> i+1)
-                            (* Negate those that are found on connected nodes *)
-                            |> List.choose (fun ii -> List.contains ii indexlist |> function true -> None | false -> Some ii)
-                            (* Choose the lowest possible index *)
-                            |> List.min
-                    |> fun i -> Hekate.LNode (vertex, i)
+                        let index =
+                            List.max indexlist
+                            |> function
+                            | i when i < 0 -> 0
+                            | i ->
+                                (* Populate a new list with all available chromatic indices between 0 and 1+max *)
+                                List.init (i+1) (fun i -> i+1)
+                                (* Negate those that are found on connected nodes *)
+                                |> List.choose (fun ii -> List.contains ii indexlist |> function true -> None | false -> Some ii)
+                                (* Choose the lowest possible index *)
+                                |> List.min
+                        index, indexMap
+                |> fun (i, indexMap) -> 
+                    (* If a room limit has been set then reassign index *)
+                    match settings.Room with
+                    | None -> i
+                    | Some cap -> _tryIndex cap i indexMap
+                |> fun i -> Hekate.LNode (vertex, i)
 
             (* This following will create a new graph with the current node being modified *)
             Hekate.Graph.Nodes.add colouredNode g
@@ -75,23 +123,8 @@ let colourGraph (graph: Graph<string, int, string>) =
 
 let printTimetable (graph: Graph<string, int, string>) =
     Console.WriteLine "---- Timetable ----"
-    let nodes = Hekate.Graph.Nodes.toList graph
-    List.mapFold
-        (* Convert nodes into a map based on time slot - i.e. chromatic index *)
-        (fun acc node ->
-            let name, index = node
-            true, Map.add
-                index
-                (
-                    match Map.tryFind index acc with 
-                    | None -> [name]
-                    | Some values -> List.append values [name]
-                )
-                acc
-        )
-        Map.empty<int, string list>
-        nodes
-    |> fun (_, table) -> {Timetable.Timeslots = table}
+    graph
+    |> _toIndexMap
+    |> fun table -> {Timetable.Timeslots = table}
     |> GraphColouring.Helpers.printTimetable
-    //|> GraphColouring.Helpers.printJson
     Console.WriteLine "---- - ----"

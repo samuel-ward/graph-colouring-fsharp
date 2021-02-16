@@ -19,3 +19,13 @@ and Timetable =
     {
         Timeslots: Map<int, string list>
     }
+
+and Settings =
+    {
+        (* TODO: Implement settings
+        Algorithm: string option
+        Data: string option
+        Timeslots: int option
+        *)
+        Room: int option
+    }

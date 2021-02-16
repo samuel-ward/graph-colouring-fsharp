@@ -3,6 +3,7 @@ module GraphColouring.Helpers
 open GraphColouring.TypeProvider
 open Newtonsoft.Json
 open System
+open System.IO
 
 let printJson (a: 'a) =
     (* Generic function to serialize into JSON and write to console *)
@@ -50,3 +51,7 @@ let printTimetable (timetable: Timetable) =
             Console.WriteLine ""
             _printBorder "-" (Map.toList timetable.Timeslots |> List.length)
         )
+
+let loadSettings =
+    File.ReadAllText "./settings.json"
+    |> JsonConvert.DeserializeObject<Settings>

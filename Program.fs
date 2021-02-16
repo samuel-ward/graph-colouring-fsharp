@@ -27,7 +27,7 @@ let rec run i =
     Console.WriteLine (sprintf "%A" i)
     run i
 
-let private _test () =
+let private _test settings =
     (* Test functions *)
     let students = getStudentData ()
     //students |> printJson
@@ -35,11 +35,11 @@ let private _test () =
     let exams = getExamData ()
     //exams |> printJson
 
-    let constraintGraph = createExamConstraintGraph (getExamData ())
+    let constraintGraph = createExamConstraintGraph settings (getExamData ())
     //constraintGraph |> printJson
-    //constraintGraph |> printGraph
+    constraintGraph |> printGraph
 
-    let greedyColoured = Greedy.colourGraph constraintGraph
+    let greedyColoured = Greedy.colourGraph settings constraintGraph
     //greedyColoured |> printJson
     //greedyColoured |> printGraph
     greedyColoured |> printGraphColouring
@@ -48,7 +48,8 @@ let private _test () =
     ()
 
 [<EntryPoint>]
-let main argv =
+let main _ =
     _setJsonSettings
-    _test ()
+    let settings = loadSettings
+    _test settings
     0

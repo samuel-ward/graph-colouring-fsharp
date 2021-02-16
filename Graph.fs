@@ -49,7 +49,7 @@ let private _createExamConflictEdges (nodes: LNode<string, int> list) (exams: Ex
         exams
     |> List.collect id
 
-let createExamConstraintGraph (exams: Exam list) =
+let createExamConstraintGraph (settings: Settings) (exams: Exam list) =
     (* Create constraint graph *)
     let nodes = _createExamVertices exams
     let edges = _createExamConflictEdges nodes exams
