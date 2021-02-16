@@ -16,6 +16,7 @@ open System
         - '-1' means an vertex/node with has not been assigned a colour yet
 *)
 
+(* TODO: move to Graph.fs *)
 let private _toIndexMap (graph: Graph<string, int, string>) =
     let nodes = Hekate.Graph.Nodes.toList graph
     List.mapFold
@@ -121,6 +122,7 @@ let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
         graph
         (Hekate.Graph.Nodes.toList graph)
 
+(* TODO: move to Graph.fs *)
 let printTimetable (graph: Graph<string, int, string>) =
     Console.WriteLine "---- Timetable ----"
     graph

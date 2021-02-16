@@ -52,6 +52,16 @@ let printTimetable (timetable: Timetable) =
             _printBorder "-" (Map.toList timetable.Timeslots |> List.length)
         )
 
+let private _toSettings (set: SettingsBase) =
+    {
+        Settings.Algorithm = 
+            match set.Algorithm with
+            | Some s when String.Equals(s, "greedy") -> Algorithm.Greedy
+            | None | _ -> Algorithm.Greedy
+        Room = set.Room
+    }
+
 let loadSettings =
     File.ReadAllText "./settings.json"
-    |> JsonConvert.DeserializeObject<Settings>
+    |> JsonConvert.DeserializeObject<SettingsBase>
+    |> _toSettings

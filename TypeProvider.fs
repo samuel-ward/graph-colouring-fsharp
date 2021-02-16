@@ -20,12 +20,25 @@ and Timetable =
         Timeslots: Map<int, string list>
     }
 
-and Settings =
+and Algorithm =
+    | Greedy
+
+and SettingsBase =
     {
         (* TODO: Implement settings
-        Algorithm: string option
         Data: string option
         Timeslots: int option
         *)
+        Algorithm: string option
+        Room: int option
+    }
+
+and Settings =
+    {
+        (* TODO: Implement settings
+        Data: string option
+        Timeslots: int option
+        *)
+        Algorithm: Algorithm
         Room: int option
     }
