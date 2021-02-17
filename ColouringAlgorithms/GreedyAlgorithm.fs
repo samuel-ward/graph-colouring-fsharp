@@ -25,7 +25,6 @@ let rec private _tryIndex cap index (indexList: Map<int, string list>) =
     | Some _ -> _tryIndex cap (index+1) indexList
 
 let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
-    Console.WriteLine "---- Greedy Colouring ----"
     let edges = Hekate.Graph.Edges.toList graph
     List.fold
         (fun g node ->

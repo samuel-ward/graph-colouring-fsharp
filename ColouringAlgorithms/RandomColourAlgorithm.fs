@@ -35,7 +35,6 @@ let private _copyShuffle (rnd: Random) source =
     arr |> List.ofArray
 
 let colourGraph (settings: Settings) (graph: Graph<string, int, string>) =
-    Console.WriteLine "---- Random Colouring ----"
     let edges = Hekate.Graph.Edges.toList graph
     (* Randomise ordering of nodes *)
     List.fold

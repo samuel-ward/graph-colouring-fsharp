@@ -51,17 +51,53 @@ let private _test settings =
     ()
 
 let rec private _run (settings: Settings) =
-    let startTime = System.DateTime.UtcNow
     match settings.Algorithm with
-    | Greedy -> createExamConstraintGraph settings (getExamData ()) |> Greedy.colourGraph settings
-    | Random -> createExamConstraintGraph settings (getExamData ()) |> RandomColour.colourGraph settings
-    |> fun g ->
-        g |> Graph.printTimetable
-        let ellapsed = (System.DateTime.UtcNow)-startTime
-        Console.WriteLine "---- Ellapsed Time ----"
-        sprintf "%fms" ellapsed.TotalMilliseconds
-        |> Console.WriteLine
-        Console.WriteLine "---- - ----"
+    | All ->
+        [
+            GraphType.Random,
+                System.DateTime.UtcNow,
+                createExamConstraintGraph settings (getExamData ()) |> RandomColour.colourGraph settings,
+                System.DateTime.UtcNow
+            GraphType.Greedy,
+                System.DateTime.UtcNow, 
+                createExamConstraintGraph settings (getExamData ()) |> Greedy.colourGraph settings,
+                System.DateTime.UtcNow
+        ]
+    | Random -> 
+        [
+            GraphType.Random,
+                System.DateTime.UtcNow, 
+                createExamConstraintGraph settings (getExamData ()) |> RandomColour.colourGraph settings,
+                System.DateTime.UtcNow
+        ]
+    | Greedy -> 
+        [
+            GraphType.Greedy,
+                System.DateTime.UtcNow,
+                createExamConstraintGraph settings (getExamData ()) |> Greedy.colourGraph settings,
+                System.DateTime.UtcNow
+        ]
+    |> List.iter
+        (fun ((gt: GraphType), (st: DateTime), (g: Hekate.Graph<string, int, string>), (et: DateTime)) ->
+            (* Print graph type header *)
+            match gt with
+            | GraphType.Constraint -> "Constraint Graph"
+            | GraphType.Random -> "Random Colouring"
+            | GraphType.Greedy -> "Greedy Colouring"
+            |> sprintf "---- %s ----"
+            |> Console.WriteLine
+
+            (* Print graph timetable *)
+            g |> Graph.printTimetable
+
+            (* Print time elapsed - NOTE: the order may skew times because of initialisation *)
+            Console.WriteLine "---- Ellapsed Time ----"
+            sprintf "%fms" (et-st).TotalMilliseconds
+            |> Console.WriteLine
+
+            Console.WriteLine "---- - ----"
+
+        )
     (* Uncomment the following line to make the application run continuously *)
     //_run settings
 

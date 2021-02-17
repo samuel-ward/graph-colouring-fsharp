@@ -56,6 +56,8 @@ let private _toSettings (set: SettingsBase) =
     {
         Settings.Algorithm = 
             match set.Algorithm with
+            (* Perform string validation of given settings *)
+            | Some s when String.Equals(s, "all") -> Algorithm.All
             | Some s when String.Equals(s, "greedy") -> Algorithm.Greedy
             | Some s when String.Equals(s, "random") -> Algorithm.Random
             | None | _ -> Algorithm.Greedy

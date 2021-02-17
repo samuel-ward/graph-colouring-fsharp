@@ -20,7 +20,13 @@ and Timetable =
         Timeslots: Map<int, string list>
     }
 
+and GraphType =
+    | Constraint
+    | Greedy
+    | Random
+
 and Algorithm =
+    | All
     | Greedy
     | Random
 

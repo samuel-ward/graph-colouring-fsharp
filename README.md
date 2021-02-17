@@ -22,24 +22,30 @@ The Graph Colouring problem is what is known as an _NP Complete_ problem.
 
 ### Random Colouring Algorithm
 
-
+The Random Colouring Algorithm shuffles all indices, using the Fisher-Yates shuffle algorithm in this case, to randomise the order in which the vertices are processed.
 
 #### Psuedo Code
 
 ```
-
+1. Randomly select first vertex and colour it with the lowest chromatic index
+2. For each remaining vertex (V-1) do the following:
+    a. Choose a vertex at random
+    b. Consider the lowest available chromatic index that is not present
+        on an adjacent vertex
+    c. If all adjacent vertices assign a new chromatic index
 ```
 
 ### Greedy Algorithm
 
-The Greedy Coloring Algorithm doesn't guarantee to use a the minimum number of colours, but it does gaurantee an upper bound on the number of colours - being `d+1` where `d` is the maximum degree of a vertex.
+The Greedy Colouring Algorithm doesn't guarantee to use a the minimum number of colours, but it does gaurantee an upper bound on the number of colours - being `d+1` where `d` is the maximum degree of a vertex.
 
 #### Psuedo Code
 
 ```
-1. Colour the first veretex with the first colour
-2. For each remaining vertex (V-1) do the following
-    a. Consider current vertex and colour it with the lowest numbered colour that hasn't been used on a previously coloured vertex adjacent to it. If all used colours appear on adjacent vertices, assign a new color
+1. Colour the first veretex with the lowest chromatic index
+2. For each remaining vertex (V-1) do the following:
+    a. Consider current vertex and assign the lowest chromatic index that hasn't been used on a previously coloured vertex adjacent to it.
+    b. If all used colours appear on adjacent vertices, assign a new chromatic index
 ```
 
 ## Running The Application
@@ -85,7 +91,7 @@ They consist of the following:
 
 ```json
 {
-    "algorithm": "greedy | random",
+    "algorithm": "all | greedy | random",
     "rooms": 10
 }
 ```
@@ -107,7 +113,7 @@ Desired settings:
 
 ```json
 {
-    "algorithm": "random | greedy | k-start | lazy-dfs",
+    "algorithm": "all | random | greedy | k-start | lazy-dfs",
     "data": "/location/to/data/file.csv",
     "rooms": 10,
     "timeslots": 10
